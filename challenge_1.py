@@ -1,9 +1,11 @@
 
+from ast import literal_eval as make_tuple
+
 class Vertex:
 
     def __init__(self, v):
         self.name = v
-        self.neighbors = set()
+        self.neighbors = []
 
     def add_neighbor(self, v):
         if v not in self.neighbors:
@@ -30,13 +32,13 @@ class Graph:
             self.num_edges += 1
 
     def print_graph(self):
-        # for pair in self.vertices.keys():
-        #     print(self.vertices.values())
-        # for key in self.vertices.keys():
-        #     print(key)
         print("# Vertices: " + str(self.num_vertices))
         print("# Edges: " + str(self.num_edges))
-        print(self.vertices)
+        print("Edge List:")
+        for key in self.vertices.keys():
+            print(key, self.vertices[key].neighbors)
+
+
 
 def main():
     graph = Graph()
@@ -45,18 +47,24 @@ def main():
         lines = file.readlines()
 
         for x in lines:
+            if x[0].isalpha():
+                continue
             if x[0].isdigit():          # making sure this is the line with all the vertices
                 # create Graph by looping through the line that contains all the vertices
                 for char in x:          # x is "1, 2, 3, 4"
                     if char.isdigit():
                         graph.add_vertex(Vertex(char))
-                # for vert_name in x:
-                #     # creating the keys as the vertexes (by calling add_vertex())
-                #     graph.add_vertex(Vertex(vert_name))
+            else:
+                # is the neighbors of the vertex at str[0]
+                tuple__neighbors = make_tuple(x)
+                v = tuple__neighbors[0]
+                u = tuple__neighbors[1]
+                weight = tuple__neighbors[2]
+                graph.add_edge(v, u)
 
 
         # loop through the pointers and call add_edge from the first v to the second v
-        print(graph.print_graph())
+        return graph.print_graph()
 
 if __name__ == '__main__':
     main()
