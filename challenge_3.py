@@ -73,22 +73,57 @@ class Graph:
 
         return len(visited) == len(self.vertices)
 
-    def dfs_recursive(self, from_vert, to_vert, seen=None):
+    def dfs_iterative(self, from_vert, to_vert):
+        '''
+        we use the stack to yeild the each possible path to get to our end goal vertex
+        properties needed:
+            visited set - to store all the vertices passed while traversing from 'from_vert' to 'to_vert'
+            stack - to keep track of our trace with vertices that are connected
+        pseudocode:
+            - start off with our stack containing the 'from_vert'
+            - loop through the stack while not empty
+                - pop off the stack and store in a variabel called 'curr'
+                - if 'curr' is not in our visited set,
+                    - add curr to visited set
+                    - loop through curr's neighbors
+                        - add the neighbor on to the stack
+            - retrun our visited set of vertices through the path
+        '''
+        visited = set()
+        stack = stack()
+        stack.push(from_vert)
+
+        while stack:
+            curr = stack.pop()
+            if curr == to_vert:
+                break
+            if curr not in visited:
+                visited.add(curr)
+                for neighbor in curr.neighbors:
+                    stack.push(neighbor)
+
+        return visited
+
+
+    def dfs_recursive(self, from_vert, to_vert, visited=None):
         '''
         properties needed:
         pseudocode:
         '''
         # initializing the seen array
-        if seen == None:
-            seen = set()
+        if visited == None:
+            visited = set()
 
-        if from_vert not in seen:
-            seen.add(from_vert)
+        if from_vert == to_vert:
+            return visited
+
+        if from_vert not in visited:
+            visited.add(from_vert)
             print(from_vert)
             for neighbor in from_vert.neighbors:
-                dfs_recursive(neighbor, to_vert, seen)
+                dfs_recursive(neighbor, to_vert, visited)
 
-        return seen
+        return visited
 
     def __iter__(self):
         """
