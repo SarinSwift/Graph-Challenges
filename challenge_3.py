@@ -115,6 +115,7 @@ class Graph:
             visited = set()
 
         if from_vert == to_vert:
+            # might need to append from_vert in here first!!!
             return visited
 
         if from_vert not in visited:

@@ -82,11 +82,11 @@ class Graph:
 
         node = to_vert
         while node:
-            path.append(node)
+            path.append(node.name)
             node = node.parent
 
-        # print("path isss", path)
-        return path.reverse()
+        # print("path isss", path[::-1])
+        return path[::-1]
 
     def print_graph(self):
 
@@ -138,7 +138,7 @@ def main():
         # print("main, graph.vertices: ", graph.vertices)
         # print("main, graph.vertices object 1: ", list(graph.vertices['1'].neighbors))
 
-    return graph.bfs(graph.vertices[from_vert], graph.vertices[to_vert])
+    return print(graph.bfs(graph.vertices[from_vert], graph.vertices[to_vert]))
 
 if __name__ == '__main__':
     main()

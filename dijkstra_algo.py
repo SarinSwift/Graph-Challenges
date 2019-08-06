@@ -10,7 +10,7 @@
 # 2. set the initial node as curr. And all other nodes are unvisited by adding all unvisited vertices in a set
 # 3. for each neighbor, calulat the distance.
 #  - Compare the new distance to the current assigned value and remove from unvisited set.
-#  - Note that the visited vertex will never be checked again 
+#  - Note that the visited vertex will never be checked again
 # 4. Once we've considered all neighbors of the curr vertex
 #  - mark curr as visited
 #  - remove from unvisited set
