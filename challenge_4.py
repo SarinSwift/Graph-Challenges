@@ -1,51 +1,51 @@
 
+# Knapsack Problem - Using dynamic programming
 
-# 1.
-# Slow time complexity
-def fibo(num):
-    if num == 0:
-        return 0
-    if num == 1:
-        return 1
+class Item:
+    def __init__(self, name, weight, val):
+        self.name = name
+        self.weight = weight
+        self.val = val
 
-    return fibo(num-1) + fibo(num-2)
+def knapsack(C, items):
+    ''' A  method to determine the maximum value of the items included in the knapsack
+    without exceeding the capacity  C
 
+        Parameters:
+        C= 50
+        items = (("boot", 10, 60),
+             ("tent", 20, 100),
+             ("water", 30, 120),
+             ("first aid", 15, 70))
+        Returns: max value
+    '''
+    # Base case where there are no items or if the maximum weight in the bag is 0
+    if len(items) == 0 or C == 0:
+        return (0, [])
 
-# 2.
-# O(n) runtime because we're usign memoization
+    # Get access to the first item in list
+    item = items[0]
 
-memo = {0: 0, 1:1}      # Global variable
-def fib_memo(num, memo):
-    if num not in memo:
-        memo[num] = fib_memo(num - 1, memo) + fib_memo(num - 2, memo)
+    # Don't do anything with the item becasue it exceeds the capacity
+    if item.weight > C:
+        return knapsack(C, items[1:])
+    else:
+        # calculate the 2 sub probelems: kanpsack with the item in it, or either knapsack without the item
+        val_with_item, knap_items = knapsack(C - item.weight, items[1:])
+        val_with_item += item.val       # add the value of the item!
+        val_without_item, knap__without_items = knapsack(C, items[1:])
 
-    return memo[num]
+        # if we want the knapsack with the item in it:
+        if val_with_item > val_without_item:
+            # append the specific item to our array and we can return the new value along with the list of items
+            knap_items.append(item.name)
+            return (val_with_item, knap_items)
+        else:
+            # return the tuple with the same value (because we didn't add an additional item to our list) and the list of items 
+            return (val_without_item, knap__without_items)
 
-
-
-# 3.
-# Using memoization with a callback(closure)!!
-
-def memoize(func):
-    memo = {}           # don't need to initialy put in 0 or 1 because we catch these cases in the fib() function
-
-    def helper(num):    # adding to our dictionary of computed values
-        if num not in memo:
-            memo[num] = func(num)
-        return memo[num]
-
-    return helper
-
-def fib(num):           # the function where we get the actual value of our fibonacci
-    if num == 0:
-        return 0
-    if num == 1:
-        return 1
-    return fib(num-1) + fib(num-2)
-
-fib = memoize(fib)      # create a variable to call from the memoize function
-print(fib(100))         # it calculates the value of fibonacci sequence of the parameter value (uses memoization to
-                        # make computation of the fibonacci sequences)
-
-
-# print(fib_memo(100, memo))
+items = [Item("boot", 10, 60),
+        Item("tent", 20, 100),
+        Item("water", 30, 120),
+        Item("first aid", 15, 70)]
+print(knapsack(50, items))
