@@ -103,3 +103,16 @@ value_with = knapsack(Capacity - item.weight, items - curr_item) + item.value
 return max(value_without, value_with)
 ```
 - Now, we can start creating the recursive function where we calculate the previous 2 sub problems.
+
+**2- Minimum Path Sum(in a grid)**  
+Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.  
+Note: You can only move either down or right at any point in time.  
+- Since you can only move either right, or downward, these are some cases we can repeat in each iteration, or recursion:
+```
+down = i+1, j
+right = i, j+1
+return min(down, right) + grid[i][j]
+```
+- we'd want to check the base cases where if the indexes are all the way on the last row and column, that means we can return straight away the value of the grid at indexes i and j. If it's on the last row, then we can only ever go right. If we're on the last column, means that we can only ever go down.
+- So we can say that our recursive solution takes in the grid, the row's index (i), and lastly the columns index (j).
+- The coding solution is in challenge_4.py file.
