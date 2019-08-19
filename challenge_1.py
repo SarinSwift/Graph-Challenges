@@ -3,50 +3,60 @@ from ast import literal_eval as make_tuple
 
 class Vertex:
 
-    def __init__(self, v):
-        self.name = v
-        self.neighbors = set()
+    def __init__(self, v_name):
+        self.name = v_name
+        self.neighbors = {}     # key: neigbor vertex object, value: weight of connecting edge
 
-    def add_neighbor(self, v):
-        # print("adding neighbor:" + str(v.name))
-        self.neighbors.add(v)
+    def add_neighbor(self, v, w=0):
+        '''Given input is already a vertex object.
+            v: the connecting neighbor, w: the weight
+        '''
+        if v not in self.neighbors:
+            self.neighbors[v] = w
+
+    def __str__(self):
+        """Output the list of neighbors of this vertex."""
+        return f"{self.name} adjacent to {[x.name for x in self.neighbors]}"
+
+    def get_neighbors(self):
+        """Return the neighbors of this vertex."""
+        return self.neighbors.keys()
+
+    def get_edge_weight(self, vertex):
+        """Return the weight of this connecting edge between self and the given vertex object."""
+        return self.neighbors[vertex]
 
 
 class Graph:
-    vertices = {}
+    vertices = {}               # key: vertex name, value: vertex object
+    num_vertices = 0            # total count of vertices in the graph
     edges = {}
-    num_vertices = 0
     num_edges = 0
 
-    def add_vertex(self, vertex):
-        '''Given input should already be a vertex object'''
-        self.vertices[vertex.name] = []         # {'1': []}
+    def add_vertex(self, name):
+        '''Given input is the name of the vertex'''
         self.num_vertices += 1
+        self.vertices[name] = Vertex(name)
+        return self.vertices[name]
 
-    def add_edge(self, u, v, cost=0):
-        # makes sure it's in the dictionary before adding it
-        if u.name in self.vertices and v.name in self.vertices:
-            # go through the vertices to get to the vertex of u and v
+    def add_edge(self, name1, name2, cost=0):
+        # insert the new vertex of object1 if not yet in the graph
+        if name1 not in self.vertices:
+            self.add_vertex(name1)
+        # insert the new vertex of object2 if not yet in the graph
+        if name2 not in self.vertices:
+            self.add_vertex(name2)
 
-            u_vert = self.vertices[u.name]          # gives the array
-            v_vert = self.vertices[v.name]          # gives the array
+        # now we're sure there are both vertices in the graph, we can add negihbors to both
+        object1 = self.vertices[name1]
+        object2 = self.vertices[name2]
+        object1.add_neighbor(object2, cost)
 
-            u_vert.append(v.name)
-            v_vert.append(u.name)
-
-            u.add_neighbor(v)
-            v.add_neighbor(u)
-
-            self._add_path(u, v, cost)
-
-    def _add_path(self, u, v, weight=0):
-        if u in self.edges:
-            # adding another tuple to the array that contains the direction to the other vertex and it's weight
-            self.edges[u].append((v, weight))
-        else:
-            # creating a new array of where u points to v with a weight
-            self.edges[u] = [(v, weight)]
         self.num_edges += 1
+
+    def get_vertices(self):
+        """Return all the vertices in the graph."""
+        return list(self.vertices.keys())
 
     def print_graph(self):
         # print("# Vertices: " + str(self.num_vertices))
