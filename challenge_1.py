@@ -58,6 +58,14 @@ class Graph:
         """Return all the vertices in the graph."""
         return list(self.vertices.keys())
 
+    def get_edges_weighted(self):
+        """Return the list of edges with weights, as tuples."""
+        edges = []
+        for v in self.vertices.values():
+            for w in v.neighbors:
+                edges.append((v.name, w.name, v.neighbors[w]))
+        return edges
+
     def print_graph(self):
         # print("# Vertices: " + str(self.num_vertices))
         # print("# Edges: " + str(self.num_edges))
@@ -80,31 +88,109 @@ class Graph:
         return iter(self.vertices.values())
 
 
-
-def main():
-    graph = Graph()
-
-    with open('graph_data.txt', 'r') as file:
+def read_from_file(filename):
+    with open(filename, 'r') as file:
         lines = file.readlines()
 
-        for x in lines:
-            if x[0].isalpha():
-                continue
-            if x[0].isdigit():          # making sure this is the line with all the vertices
-                # create Graph by looping through the line that contains all the vertices
-                for key in x.strip().split(","):     # key is 1, 2, 3, 4
-                    graph.add_vertex(Vertex(key))
-            else:
-                # is the neighbors of the vertex at str[0]
-                tuple__neighbors = make_tuple(x)        # tuple__neighbors is (1,2,10)
-                v_from = Vertex(str(tuple__neighbors[0]))
-                v_to = Vertex(str(tuple__neighbors[1]))
-                weight = tuple__neighbors[2]
+        # make sure it's a graph
+        graph_str =  lines[0].strip() if len(lines) > 0 else None
+        if graph_str != "G":
+            raise Exception("File must start with G.")
+        # is_bidirectional = graph_or_digraph_str == "G"
 
-                graph.add_edge(v_from, v_to, weight)
+        graph = Graph()
 
-        # loop through the pointers and call add_edge from the first v to the second v
-        return graph.print_graph()
+        # add the vertices from the 2nd line
+        for vertex_name in lines[1].strip("() \n").split(","):
+            graph.add_vertex(vertex_name)
+
+        # add the edges by looping through the remaing lines in the file
+        # the line is (1,2,10) and so on...
+        for line in lines[2:]:
+            # getting rid of ',' and combining all the 2/3 values together
+            new_edge = line.strip("() \n").split(",")
+            if len(new_edge) < 2 or len(new_edge) > 3:
+                raise Exception("Lines adding edges must include 2 or 3 values")
+
+            # Get vertices from 'new_edge' from the first index to the second.
+            vertex1, vertex2 = new_edge[:2]
+
+            # Get weight if the len of 'new_edge' is 3. If the length is not 3, weight value will be None
+            weight = int(new_edge[2]) if len(new_edge) == 3 else None
+
+            # Add edge(s)!!
+            graph.add_edge(vertex1, vertex2, weight)
+            graph.add_edge(vertex2, vertex1, weight)
+
+        return graph
+
+def main():
+
+    # creating the graph:
+    g = read_from_file('graph_data.txt')
+
+    # Output the vertices & edges
+    # Print vertices
+    print(f"The vertices are: {g.get_vertices()} \n")
+
+    # Print edges
+    print("The edges are: ")
+    for edge in g.get_edges_weighted():
+        print(edge)
+
+
+    # with open('graph_data.txt', 'r') as file:
+    #     lines = file.readlines()
+    #
+    #     # make sure it's a graph
+    #     graph_str =  lines[0].strip() if len(lines) > 0 else None
+    #     if graph_str != "G":
+    #         raise Exception("File must start with G.")
+    #     # is_bidirectional = graph_or_digraph_str == "G"
+    #
+    #     graph = Graph()
+    #
+    #     # add the vertices from the 2nd line
+    #     for vertex_name in lines[1].strip("() \n").split(","):
+    #         g.add_vertex(vertex_name)
+    #
+    #     # add the edges by looping through the remaing lines in the file
+    #     # the line is (1,2,10) and so on...
+    #     for line in lines[2:]:
+    #         # getting rid of ',' and combining all the 2/3 values together
+    #         new_edge = line.strip("() \n").split(",")
+    #         if len(new_edge) < 2 or len(new_edge) > 3:
+    #             raise Exception("Lines adding edges must include 2 or 3 values")
+    #
+    #         # Get vertices from 'new_edge' from the first index to the second.
+    #         vertex1, vertex2 = new_edge[:2]
+    #
+    #         # Get weight if the len of 'new_edge' is 3. If the length is not 3, weight value will be None
+    #         weight = int(new_edge[2]) if len(new_edge) == 3 else None
+    #
+    #         # Add edge(s)!!
+    #         g.add_edge(vertex1, vertex2, weight)
+    #         g.add_edge(vertex2, vertex1, weight)
+    #
+    #     return graph
+        # for x in lines:
+        #     if x[0].isalpha():
+        #         continue
+        #     if x[0].isdigit():          # making sure this is the line with all the vertices
+        #         # create Graph by looping through the line that contains all the vertices
+        #         for key in x.strip().split(","):     # key is 1, 2, 3, 4
+        #             graph.add_vertex(Vertex(key))
+        #     else:
+        #         # is the neighbors of the vertex at str[0]
+        #         tuple__neighbors = make_tuple(x)        # tuple__neighbors is (1,2,10)
+        #         v_from = Vertex(str(tuple__neighbors[0]))
+        #         v_to = Vertex(str(tuple__neighbors[1]))
+        #         weight = tuple__neighbors[2]
+        #
+        #         graph.add_edge(v_from, v_to, weight)
+        #
+        # # loop through the pointers and call add_edge from the first v to the second v
+        # return graph.print_graph()
 
 if __name__ == '__main__':
     main()
